@@ -13,23 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.androiddevchallenge.ui.theme
+package com.example.androiddevchallenge.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androiddevchallenge.data.MainRepository
+import com.example.androiddevchallenge.data.models.Photo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val mainRepository: MainRepository) : ViewModel() {
 
+    // Backing property to avoid state updates from other classes
+    private val _photosState = MutableStateFlow(emptyList<Photo>())
+    // The UI collects from this StateFlow to get its state updates
+    val photosState: StateFlow<List<Photo>> = _photosState
+
     fun getPhotos() {
         viewModelScope.launch {
             val result = mainRepository.getPhotos()
-            Log.d("Sierra", result.photos.map { it.id }.toString())
+            _photosState.value = result.photos
         }
     }
 }
