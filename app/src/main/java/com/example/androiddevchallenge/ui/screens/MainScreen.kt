@@ -15,6 +15,10 @@
  */
 package com.example.androiddevchallenge.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,7 +46,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.data.models.Camera
 import com.example.androiddevchallenge.data.models.Photo
@@ -51,23 +54,14 @@ import com.example.androiddevchallenge.ui.MainViewModel
 import com.example.androiddevchallenge.ui.theme.teal200
 import com.google.accompanist.coil.rememberCoilPainter
 
+@ExperimentalAnimationApi
 @Composable
-fun GalleryScreen(viewModel: MainViewModel) {
-    val photos = viewModel.photosState.collectAsState()
+fun MainScreen(viewModel: MainViewModel) {
+    val photos = viewModel
+        .photosState
+        .collectAsState()
     var showDetails by remember { mutableStateOf(false) }
     var photoDetail by remember { mutableStateOf(-1) }
-
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        itemsIndexed(photos.value) { index, photo ->
-            PhotoItem(
-                photo = photo,
-                onClick = {
-                    photoDetail = index
-                    showDetails = !showDetails
-                }
-            )
-        }
-    }
 
 //    Column(modifier = Modifier
 //        .verticalScroll(rememberScrollState())
@@ -79,34 +73,48 @@ fun GalleryScreen(viewModel: MainViewModel) {
 //
 //        }
 //    }
-    if (showDetails) DetailsView(
-        photo = photos.value[photoDetail],
-        isShown = { showDetails = false }
+
+    PhotoList(
+        photos = photos.value,
+        onClick = { index ->
+            photoDetail = index
+            showDetails = !showDetails
+        }
     )
-}
-@Composable
-fun PhotoItem(photo: Photo, onClick: (() -> Unit)? = null) {
-    Image(
-        painter = rememberCoilPainter(makeSecure(photo.imgSrc), fadeIn = true),
-        contentDescription = "Mars Photo on ${photo.earthDate} from ${photo.rover.name}",
-        modifier = Modifier
-            .padding(8.dp)
-            .clip(CircleShape)
-            .background(color = teal200)
-            .padding(12.dp)
-            .clip(CircleShape)
-            .clickable { onClick?.invoke() }
-    )
+
+    AnimatedVisibility(
+        visible = showDetails,
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it })
+    ) {
+        PhotosDetails(
+            photo = photos.value[photoDetail],
+            isShown = { showDetails = false }
+        )
+    }
 }
 
 @Composable
-fun DetailsView(photo: Photo, isShown: () -> Unit) {
+fun PhotoList(photos: List<Photo>, onClick: (Int) -> Unit) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        itemsIndexed(photos) { index, photo ->
+            PhotoItem(
+                photo = photo,
+                onClick = {
+                    onClick(index)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun PhotosDetails(photo: Photo, isShown: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
     ) {
-
         Column(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
@@ -132,10 +140,19 @@ fun DetailsView(photo: Photo, isShown: () -> Unit) {
     }
 }
 
-@Preview
 @Composable
-fun ShowPhotoDetails() {
-    DetailsView(dummyPhoto) {}
+fun PhotoItem(photo: Photo, onClick: (() -> Unit)? = null) {
+    Image(
+        painter = rememberCoilPainter(makeSecure(photo.imgSrc), fadeIn = true),
+        contentDescription = "Mars Photo on ${photo.earthDate} from ${photo.rover.name}",
+        modifier = Modifier
+            .padding(8.dp)
+            .clip(CircleShape)
+            .background(color = teal200)
+            .padding(12.dp)
+            .clip(CircleShape)
+            .clickable { onClick?.invoke() }
+    )
 }
 
 val dummyPhoto = Photo(

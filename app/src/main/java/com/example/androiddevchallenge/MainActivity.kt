@@ -24,7 +24,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.ui.MainViewModel
-import com.example.androiddevchallenge.ui.screens.GalleryScreen
+import com.example.androiddevchallenge.ui.screens.MainScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             MyTheme(darkTheme = true) {
                 MyApp {
                     val navController = rememberNavController()
-                    GalleryScreen(mainViewModel)
+                    MainScreen(mainViewModel)
                 }
             }
         }
