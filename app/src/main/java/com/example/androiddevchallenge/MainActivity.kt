@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.getPhotos()
 
         setContent {
-            MyTheme {
+            MyTheme(darkTheme = true) {
                 MyApp {
                     val navController = rememberNavController()
                     GalleryScreen(mainViewModel)
@@ -56,19 +56,3 @@ fun MyApp(content: @Composable () -> Unit) {
         content()
     }
 }
-
-// @Preview("Light Theme", widthDp = 360, heightDp = 640)
-// @Composable
-// fun LightPreview() {
-//    MyTheme {
-//        MyApp()
-//    }
-// }
-//
-// @Preview("Dark Theme", widthDp = 360, heightDp = 640)
-// @Composable
-// fun DarkPreview() {
-//    MyTheme(darkTheme = true) {
-//        MyApp()
-//    }
-// }

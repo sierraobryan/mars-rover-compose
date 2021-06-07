@@ -33,10 +33,10 @@ data class Rover(
     @Json(name = "landing_date") val landingDate: String,
     @Json(name = "launch_date") val launchDate: String,
     @Json(name = "status") val status: String,
-//    @Json(name = "max_sol") val maxSol: Long?,
-//    @Json(name = "max_date") val maxDate: String?,
-//    @Json(name = "total_photos") val totalPhotos: Long?,
-//    @Json(name = "cameras") val cameras: List<Camera>?
+    @Json(name = "max_sol") val maxSol: Long?,
+    @Json(name = "max_date") val maxDate: String?,
+    @Json(name = "total_photos") val totalPhotos: Long?,
+    @Json(name = "cameras") val cameras: List<Camera>?
 )
 
 @JsonClass(generateAdapter = true)
