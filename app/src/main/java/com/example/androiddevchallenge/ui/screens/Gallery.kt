@@ -101,9 +101,10 @@ fun PhotoItem(photo: Photo, onClick: (() -> Unit)? = null) {
 
 @Composable
 fun DetailsView(photo: Photo, isShown: () -> Unit) {
-    Row(modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colors.background)
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
     ) {
 
         Column(
