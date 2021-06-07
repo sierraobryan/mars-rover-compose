@@ -15,17 +15,23 @@
  */
 package com.example.androiddevchallenge.ui.screens
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,7 +54,7 @@ fun GalleryScreen(viewModel: MainViewModel) {
     var showDetails by remember { mutableStateOf(false) }
     var photoDetail by remember { mutableStateOf(-1) }
 
-    LazyColumn {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
         itemsIndexed(photos.value) { index, photo ->
             PhotoListItem(
                 photo = photo,
@@ -70,7 +76,7 @@ fun GalleryScreen(viewModel: MainViewModel) {
 //
 //        }
 //    }
-    if (showDetails) DetailsView(photo = photos.value[photoDetail])
+    if (showDetails) DetailsView(photo = photos.value[photoDetail], isShown = { showDetails = false })
 }
 @Composable
 fun PhotoListItem(photo: Photo, onClick: () -> Unit) {
@@ -81,25 +87,33 @@ fun PhotoListItem(photo: Photo, onClick: () -> Unit) {
     )
 }
 @Composable
-fun DetailsView(photo: Photo) {
-    Column(
-        horizontalAlignment = Alignment.Start,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .verticalScroll(rememberScrollState())
-    ) {
-        Image(rememberCoilPainter(makeSecure(photo.imgSrc)), contentDescription = "", modifier = Modifier.fillMaxWidth())
-        Text(text = "Landing date: " + photo.rover.landingDate)
-        Text(text = "Camera: " + photo.camera.fullName)
-        Text(text = "Rover:" + photo.rover.name)
+fun DetailsView(photo: Photo, isShown: () -> Unit) {
+    Row(modifier = Modifier.fillMaxSize().background(Color.White)) {
+
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Image(
+                rememberCoilPainter(makeSecure(photo.imgSrc)),
+                contentDescription = ""
+            )
+            Text(text = "Landing date: " + photo.rover.landingDate)
+            Text(text = "Camera: " + photo.camera.fullName)
+            Text(text = "Rover:" + photo.rover.name)
+        }
+        IconButton(onClick = isShown) {
+            Icon(Icons.Filled.Close, contentDescription = "Close photo details", tint = MaterialTheme.colors.onSurface)
+        }
     }
 }
 
 @Preview
 @Composable
 fun showPhotoDetails() {
-    DetailsView(dummyPhoto)
+    DetailsView(dummyPhoto) {}
 }
 
 val dummyPhoto = Photo(
