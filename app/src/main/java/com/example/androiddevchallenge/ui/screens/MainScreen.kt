@@ -19,41 +19,16 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.data.models.Camera
 import com.example.androiddevchallenge.data.models.Photo
 import com.example.androiddevchallenge.data.models.Rover
 import com.example.androiddevchallenge.ui.MainViewModel
-import com.example.androiddevchallenge.ui.theme.teal200
-import com.google.accompanist.coil.rememberCoilPainter
-import org.intellij.lang.annotations.JdkConstants
 
 @ExperimentalAnimationApi
 @Composable
@@ -83,86 +58,22 @@ fun MainScreen(viewModel: MainViewModel) {
         }
     )
 
-    if (showDetails)
-        PhotosDetails(
-            photo = photos.value[photoDetail],
-            isShown = { showDetails = false }
-        )
-
-//    AnimatedVisibility(
-//        visible = showDetails,
-//        enter = slideInVertically(initialOffsetY = { it }),
-//        exit = slideOutVertically(targetOffsetY = { it })
-//    ) {
+//    if (showDetails)
 //        PhotosDetails(
 //            photo = photos.value[photoDetail],
 //            isShown = { showDetails = false }
 //        )
-//    }
-}
 
-@Composable
-fun PhotoList(photos: List<Photo>, onClick: (Int) -> Unit) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    AnimatedVisibility(
+        visible = showDetails,
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it })
     ) {
-        itemsIndexed(photos) { index, photo ->
-            PhotoItem(
-                photo = photo,
-                onClick = {
-                    onClick(index)
-                }
-            )
-        }
+        PhotosDetails(
+            photo = photos.value[photoDetail],
+            isShown = { showDetails = false }
+        )
     }
-}
-
-@Composable
-fun PhotosDetails(photo: Photo, isShown: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            IconButton(
-                onClick = isShown,
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Icon(
-                    Icons.Filled.Close,
-                    contentDescription = "Close photo details",
-                    tint = MaterialTheme.colors.onSurface
-                )
-            }
-            PhotoItem(photo = photo)
-            Text(text = "Landing date: " + photo.rover.landingDate)
-            Text(text = "Camera: " + photo.camera.fullName)
-            Text(text = "Rover:" + photo.rover.name)
-        }
-    }
-}
-
-@Composable
-fun PhotoItem(photo: Photo, onClick: (() -> Unit)? = null) {
-    Image(
-        painter = rememberCoilPainter(makeSecure(photo.imgSrc)),
-        contentDescription = "Mars Photo on ${photo.earthDate} from ${photo.rover.name}",
-        modifier = Modifier
-            .padding(8.dp)
-           .clip(CircleShape)
-           .background(color = teal200)
-           .padding(12.dp)
-           .clip(CircleShape)
-           .clickable { onClick?.invoke() }
-    )
 }
 
 val dummyPhoto = Photo(
@@ -188,7 +99,3 @@ val dummyPhoto = Photo(
         cameras = null
     )
 )
-
-private fun makeSecure(str: String): String {
-    return str.replace("http", "https")
-}
