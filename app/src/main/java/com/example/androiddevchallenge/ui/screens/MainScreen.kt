@@ -53,6 +53,7 @@ import com.example.androiddevchallenge.data.models.Rover
 import com.example.androiddevchallenge.ui.MainViewModel
 import com.example.androiddevchallenge.ui.theme.teal200
 import com.google.accompanist.coil.rememberCoilPainter
+import org.intellij.lang.annotations.JdkConstants
 
 @ExperimentalAnimationApi
 @Composable
@@ -82,21 +83,30 @@ fun MainScreen(viewModel: MainViewModel) {
         }
     )
 
-    AnimatedVisibility(
-        visible = showDetails,
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it })
-    ) {
+    if (showDetails)
         PhotosDetails(
             photo = photos.value[photoDetail],
             isShown = { showDetails = false }
         )
-    }
+
+//    AnimatedVisibility(
+//        visible = showDetails,
+//        enter = slideInVertically(initialOffsetY = { it }),
+//        exit = slideOutVertically(targetOffsetY = { it })
+//    ) {
+//        PhotosDetails(
+//            photo = photos.value[photoDetail],
+//            isShown = { showDetails = false }
+//        )
+//    }
 }
 
 @Composable
 fun PhotoList(photos: List<Photo>, onClick: (Int) -> Unit) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         itemsIndexed(photos) { index, photo ->
             PhotoItem(
                 photo = photo,
@@ -143,15 +153,15 @@ fun PhotosDetails(photo: Photo, isShown: () -> Unit) {
 @Composable
 fun PhotoItem(photo: Photo, onClick: (() -> Unit)? = null) {
     Image(
-        painter = rememberCoilPainter(makeSecure(photo.imgSrc), fadeIn = true),
+        painter = rememberCoilPainter(makeSecure(photo.imgSrc)),
         contentDescription = "Mars Photo on ${photo.earthDate} from ${photo.rover.name}",
         modifier = Modifier
             .padding(8.dp)
-            .clip(CircleShape)
-            .background(color = teal200)
-            .padding(12.dp)
-            .clip(CircleShape)
-            .clickable { onClick?.invoke() }
+           .clip(CircleShape)
+           .background(color = teal200)
+           .padding(12.dp)
+           .clip(CircleShape)
+           .clickable { onClick?.invoke() }
     )
 }
 

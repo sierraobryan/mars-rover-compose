@@ -19,6 +19,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     val mainViewModel: MainViewModel by viewModels()
 
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         setContent {
             MyTheme(darkTheme = true) {
                 MyApp {
-                    val navController = rememberNavController()
                     MainScreen(mainViewModel)
                 }
             }
