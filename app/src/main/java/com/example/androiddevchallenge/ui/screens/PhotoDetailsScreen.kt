@@ -15,17 +15,24 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
 import com.example.androiddevchallenge.data.models.Photo
+import com.example.androiddevchallenge.ui.MainViewModel
 import com.example.androiddevchallenge.ui.components.PhotoItem
-import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
-fun PhotosDetails(photo: Photo, isShown: () -> Unit) {
+fun PhotosDetails(viewModel: MainViewModel, navController: NavController) {
+    val photoIndex by viewModel
+        .photoIndexState
+        .collectAsState()
+
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -39,7 +46,7 @@ fun PhotosDetails(photo: Photo, isShown: () -> Unit) {
                 .verticalScroll(rememberScrollState())
         ) {
             IconButton(
-                onClick = isShown,
+                onClick = { navController.navigateUp() },
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Icon(
@@ -48,10 +55,10 @@ fun PhotosDetails(photo: Photo, isShown: () -> Unit) {
                     tint = MaterialTheme.colors.onSurface
                 )
             }
-            PhotoItem(photo = photo)
-            Text(text = "Landing date: " + photo.rover.landingDate)
-            Text(text = "Camera: " + photo.camera.fullName)
-            Text(text = "Rover:" + photo.rover.name)
+            PhotoItem(photo = viewModel.photosState.value[photoIndex])
+            Text(text = "Landing date: " + viewModel.photosState.value[photoIndex].rover.landingDate)
+            Text(text = "Camera: " + viewModel.photosState.value[photoIndex].camera.fullName)
+            Text(text = "Rover:" + viewModel.photosState.value[photoIndex].rover.name)
         }
     }
 }
@@ -74,51 +81,63 @@ fun ConstraintPhotoDetails(photo: Photo, isShown: () -> Unit) {
         )
         Text(
             text = "Landing date:",
-            modifier = itemModifier.constrainAs(landingLabel) {
-                start.linkTo(parent.start)
-                top.linkTo(image.bottom)
-            }.padding(horizontal = 10.dp)
+            modifier = itemModifier
+                .constrainAs(landingLabel) {
+                    start.linkTo(parent.start)
+                    top.linkTo(image.bottom)
+                }
+                .padding(horizontal = 10.dp)
         )
         Text(
             text = "Camera:",
-            modifier = itemModifier.constrainAs(cameraLabel) {
-                start.linkTo(parent.start)
-                top.linkTo(landingText.bottom)
-            }.padding(horizontal = 10.dp)
+            modifier = itemModifier
+                .constrainAs(cameraLabel) {
+                    start.linkTo(parent.start)
+                    top.linkTo(landingText.bottom)
+                }
+                .padding(horizontal = 10.dp)
         )
         Text(
             text = "Rover:",
-            modifier = itemModifier.constrainAs(roverLabel) {
-                start.linkTo(parent.start)
-                top.linkTo(cameraText.bottom)
-            }.padding(horizontal = 10.dp)
+            modifier = itemModifier
+                .constrainAs(roverLabel) {
+                    start.linkTo(parent.start)
+                    top.linkTo(cameraText.bottom)
+                }
+                .padding(horizontal = 10.dp)
         )
         Text(
             text = photo.rover.landingDate,
-            modifier = itemModifier.constrainAs(landingText) {
-                start.linkTo(landingLabel.end)
-                top.linkTo(image.bottom)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-            }.padding(horizontal = 10.dp)
+            modifier = itemModifier
+                .constrainAs(landingText) {
+                    start.linkTo(landingLabel.end)
+                    top.linkTo(image.bottom)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                }
+                .padding(horizontal = 10.dp)
         )
         Text(
             text = photo.camera.fullName,
-            modifier = itemModifier.constrainAs(cameraText) {
-                start.linkTo(landingLabel.end)
-                top.linkTo(landingLabel.bottom)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-            }.padding(horizontal = 10.dp)
+            modifier = itemModifier
+                .constrainAs(cameraText) {
+                    start.linkTo(landingLabel.end)
+                    top.linkTo(landingLabel.bottom)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                }
+                .padding(horizontal = 10.dp)
         )
         Text(
             text = photo.rover.name,
-            modifier = itemModifier.constrainAs(roverText) {
-                start.linkTo(landingLabel.end)
-                top.linkTo(roverLabel.top)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-            }.padding(horizontal = 10.dp)
+            modifier = itemModifier
+                .constrainAs(roverText) {
+                    start.linkTo(landingLabel.end)
+                    top.linkTo(roverLabel.top)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                }
+                .padding(horizontal = 10.dp)
         )
     }
 }

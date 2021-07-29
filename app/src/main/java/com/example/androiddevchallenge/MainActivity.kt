@@ -23,9 +23,14 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.ui.MainViewModel
+import com.example.androiddevchallenge.ui.Screen
 import com.example.androiddevchallenge.ui.screens.MainScreen
+import com.example.androiddevchallenge.ui.screens.PhotoList
+import com.example.androiddevchallenge.ui.screens.PhotosDetails
 import com.example.androiddevchallenge.ui.theme.MyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,9 +46,16 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.getPhotos()
 
         setContent {
+            val navController = rememberNavController()
             MyTheme(darkTheme = true) {
                 MyApp {
-                    MainScreen(mainViewModel)
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.ListScreen.route
+                    ) {
+                        composable(Screen.ListScreen.route) { PhotoList(mainViewModel, navController) }
+                        composable(Screen.DetailsScreen.route) { PhotosDetails(mainViewModel, navController) }
+                    }
                 }
             }
         }
