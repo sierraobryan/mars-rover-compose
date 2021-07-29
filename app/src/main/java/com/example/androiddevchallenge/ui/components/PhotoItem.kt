@@ -14,11 +14,11 @@ import com.example.androiddevchallenge.ui.theme.teal200
 import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
-fun PhotoItem(photo: Photo, onClick: (() -> Unit)? = null) {
+fun PhotoItem(photo: Photo, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null,) {
     Image(
         painter = rememberCoilPainter(makeSecure(photo.imgSrc)),
         contentDescription = "Mars Photo on ${photo.earthDate} from ${photo.rover.name}",
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .clip(CircleShape)
             .background(color = teal200)
