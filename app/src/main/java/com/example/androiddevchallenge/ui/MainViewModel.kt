@@ -33,10 +33,19 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
     // The UI collects from this StateFlow to get its state updates
     val photosState: StateFlow<List<Photo>> = _photosState
 
+    // Backing property to avoid state updates from other classes
+    private val _photoIndexState = MutableStateFlow(-1)
+    // The UI collects from this StateFlow to get its state updates
+    val photoIndexState: StateFlow<Int> = _photoIndexState
+
     fun getPhotos() {
         viewModelScope.launch {
             val result = mainRepository.getPhotos()
             _photosState.value = result.photos
         }
+    }
+
+    fun setSelectedIndex(index: Int) {
+        _photoIndexState.value = index
     }
 }

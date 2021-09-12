@@ -23,16 +23,21 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.ui.MainViewModel
-import com.example.androiddevchallenge.ui.screens.MainScreen
+import com.example.androiddevchallenge.ui.Screen
+import com.example.androiddevchallenge.ui.screens.PhotoList
+import com.example.androiddevchallenge.ui.screens.PhotosDetails
 import com.example.androiddevchallenge.ui.theme.MyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    val mainViewModel: MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +46,31 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.getPhotos()
 
         setContent {
+            val navController = rememberNavController()
             MyTheme(darkTheme = true) {
                 MyApp {
-                    MainScreen(mainViewModel)
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.ListScreen.route
+                    ) {
+                        composable(Screen.ListScreen.route) {
+                            PhotoList(mainViewModel) { navigateToDetails(navController) }
+                        }
+                        composable(Screen.DetailsScreen.route) {
+                            PhotosDetails(mainViewModel) { navigateToPhotoList(navController) }
+                        }
+                    }
                 }
             }
         }
+    }
+
+    private fun navigateToDetails(navController: NavController) {
+        navController.navigate(Screen.DetailsScreen.route)
+    }
+
+    private fun navigateToPhotoList(navController: NavController) {
+        navController.navigateUp()
     }
 }
 
