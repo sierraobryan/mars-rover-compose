@@ -1,6 +1,5 @@
 package com.example.androiddevchallenge.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,13 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.navigation.NavController
 import com.example.androiddevchallenge.data.models.Photo
 import com.example.androiddevchallenge.ui.MainViewModel
 import com.example.androiddevchallenge.ui.components.PhotoItem
 
 @Composable
-fun PhotosDetails(viewModel: MainViewModel, navController: NavController) {
+fun PhotosDetails(viewModel: MainViewModel, backNavigation: () -> Unit) {
     val photoIndex by viewModel
         .photoIndexState
         .collectAsState()
@@ -46,7 +44,7 @@ fun PhotosDetails(viewModel: MainViewModel, navController: NavController) {
                 .verticalScroll(rememberScrollState())
         ) {
             IconButton(
-                onClick = { navController.navigateUp() },
+                onClick = backNavigation,
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Icon(
@@ -140,8 +138,4 @@ fun ConstraintPhotoDetails(photo: Photo, isShown: () -> Unit) {
                 .padding(horizontal = 10.dp)
         )
     }
-}
-
-private fun makeSecure(str: String): String {
-    return str.replace("http", "https")
 }

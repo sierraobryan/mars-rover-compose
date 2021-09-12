@@ -7,14 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import com.example.androiddevchallenge.data.models.Photo
 import com.example.androiddevchallenge.ui.MainViewModel
-import com.example.androiddevchallenge.ui.Screen
 import com.example.androiddevchallenge.ui.components.PhotoItem
 
 @Composable
-fun PhotoList(viewModel: MainViewModel, navController: NavController) {
+fun PhotoList(viewModel: MainViewModel, forwardNavigation: () -> Unit) {
     val photos = viewModel
         .photosState
         .collectAsState()
@@ -28,7 +25,7 @@ fun PhotoList(viewModel: MainViewModel, navController: NavController) {
                 photo = photo,
                 onClick = {
                     viewModel.setSelectedIndex(index)
-                    navController.navigate(Screen.DetailsScreen.route)
+                    forwardNavigation()
                 }
             )
         }
